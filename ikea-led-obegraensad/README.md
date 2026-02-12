@@ -2,7 +2,7 @@
 
 # IKEA OBEGRÄNSAD LED Wall Lamp — Extended Firmware
 
-Alternative firmware for the IKEA OBEGRÄNSAD LED Wall Lamp with **43 plugins**, city clock, scrolling marquee, weather display, and more.
+Alternative firmware for the IKEA OBEGRÄNSAD LED Wall Lamp with **44 plugins**, city clock, weather forecast, scrolling marquee, and more.
 
 > This project is based on the excellent work by [ph1p/ikea-led-obegraensad](https://github.com/ph1p/ikea-led-obegraensad). The original project provides the core framework — plugin system, web GUI, OTA updates, and hardware abstraction. I added a number of my own plugins and features on top because I wanted them sooner rather than later. This is not a competition — just a personal fork with extra stuff. All credit for the foundation goes to the original author and contributors.
 
@@ -12,8 +12,9 @@ Alternative firmware for the IKEA OBEGRÄNSAD LED Wall Lamp with **43 plugins**,
 
 ## What's Different from the Original
 
-- **18 additional plugins**: animations, games, character animations, clocks with weather
+- **19 additional plugins**: animations, games, character animations, clocks with weather
 - **City Clock** with automatic timezone, weather display, and night mode detection for multiple cities
+- **Weather Forecast** showing tomorrow's conditions and temperatures for a selectable city
 - **Scrolling Marquee** with Latin + Cyrillic character support and web control
 - **Espoo Clock** with weather from Open-Meteo API
 - **Per-pixel brightness gradients** in sprite-based plugins (Batman, Mario, Goose)
@@ -99,7 +100,7 @@ The AP name can be changed via `WIFI_MANAGER_SSID` in `include/constants.h`.
 
 ## All Plugins
 
-43 active plugins in total. Plugins marked with **★** are custom additions.
+44 active plugins in total. Plugins marked with **★** are custom additions.
 
 ### Animations & Visual Effects
 
@@ -159,20 +160,21 @@ The AP name can be changed via `WIFI_MANAGER_SSID` in `include/constants.h`.
 |---|--------|-------------|
 | 38 | **★ Espoo Clock** | Time + weather for Espoo via Open-Meteo |
 | 39 | **★ City Clock** | Multi-city clock with timezone/weather/night mode |
+| 40 | **★ Forecast** | Tomorrow's weather forecast for a selectable city |
 
 ### Text & Communication
 
 | # | Plugin | Description |
 |---|--------|-------------|
-| 40 | **★ Marquee** | Scrolling text with Latin + Cyrillic support |
+| 41 | **★ Marquee** | Scrolling text with Latin + Cyrillic support |
 
 ### Network & Integration
 
 | # | Plugin | Description |
 |---|--------|-------------|
-| 41 | Animation | Custom animations from web UI creator |
-| 42 | DDP | Display Data Protocol (UDP pixel control) |
-| 43 | ArtNet | ArtNet DMX protocol support |
+| 42 | Animation | Custom animations from web UI creator |
+| 43 | DDP | Display Data Protocol (UDP pixel control) |
+| 44 | ArtNet | ArtNet DMX protocol support |
 
 ---
 
@@ -193,6 +195,22 @@ Features:
 - Night mode detection with month-based sunrise/sunset tables for ~55°N
 - Persistent city selection via NVS (survives reboots and scheduler cycling)
 - Web UI at `/cityclock` for city selection
+
+### Weather Forecast ★
+
+Displays tomorrow's weather forecast for a selectable city:
+- **Espoo** — default
+- **Helsinki**
+- **St. Petersburg**
+- **Berlin**
+
+Features:
+- Weather data from [Open-Meteo API](https://open-meteo.com/) (free, no API key)
+- Updates every 30 minutes, 60-second retry on failure
+- 3-phase display cycle: city name scroll → weather icon → max/min temperatures
+- Up/down arrows indicate high and low temps with degree symbols
+- Persistent city selection via NVS (works with scheduler)
+- Web UI at `/forecast` for city selection
 
 ### Marquee ★
 
@@ -224,7 +242,8 @@ A 12×10 pixel heart centered on the display with realistic double-beat pulsing 
 |-----|-------------|
 | `/` | Main control panel — plugin list, brightness, drawing canvas, scheduler |
 | `/marquee` | Marquee text input with speed control |
-| `/cityclock` | City selection dropdown with save |
+| `/cityclock` | City Clock city selection with save |
+| `/forecast` | Weather Forecast city selection with save |
 | `/config` | Device configuration (weather location, NTP server, timezone) |
 | `/update` | OTA firmware update (ElegantOTA) |
 
@@ -290,6 +309,13 @@ GET /api/schedule/clear
 ```http
 GET  /api/cityclock          # Returns {"cityIndex": N}
 POST /api/cityclock          # Body: {"cityIndex": N}  — saves without switching plugin
+```
+
+### Weather Forecast
+
+```http
+GET  /api/forecast           # Returns {"cityIndex": N}
+POST /api/forecast           # Body: {"cityIndex": N}  — saves city for scheduler
 ```
 
 ### Configuration
@@ -496,9 +522,9 @@ src/
 frontend/               # SolidJS web UI (pnpm build → webgui.cpp)
 ```
 
-**Resource usage** (ESP32, 43 plugins):
+**Resource usage** (ESP32, 44 plugins):
 - RAM: 16.3% (53 KB / 320 KB)
-- Flash: 79.6% (1.51 MB / 1.90 MB)
+- Flash: 80.1% (1.52 MB / 1.90 MB)
 
 ---
 

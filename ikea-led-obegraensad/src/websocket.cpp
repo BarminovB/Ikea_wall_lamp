@@ -131,7 +131,7 @@ void onWsEvent(AsyncWebSocket *server,
           Screen.setBrightness(brightness, true);
           sendInfo();
         }
-        else if (!strcmp(event, "marquee") || !strcmp(event, "cityclock"))
+        else if (!strcmp(event, "marquee") || !strcmp(event, "cityclock") || !strcmp(event, "forecast"))
         {
           // Combined plugin switch + data: switch first, then forward to plugin
           if (wsRequest["plugin"].is<int>())
@@ -157,7 +157,7 @@ void onWsEvent(AsyncWebSocket *server,
           }
           else
           {
-            Serial.println(F("[WebSocket] ERROR: No active plugin for marquee/cityclock!"));
+            Serial.println(F("[WebSocket] ERROR: No active plugin!"));
           }
         }
       }

@@ -209,6 +209,22 @@ export const Sidebar: Component<SidebarProps> = (props) => {
         </a>
 
         <a
+          href="/cityclock"
+          class="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium"
+        >
+          <i class="fa-solid fa-city mr-2" />
+          City Clock Settings
+        </a>
+
+        <a
+          href="/forecast"
+          class="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium"
+        >
+          <i class="fa-solid fa-cloud-sun mr-2" />
+          Forecast Settings
+        </a>
+
+        <a
           href="/update"
           class="inline-flex items-center text-gray-700 hover:text-gray-900 font-medium"
         >

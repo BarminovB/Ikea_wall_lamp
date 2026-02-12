@@ -168,6 +168,84 @@ document.getElementById('save').onclick=async()=>{
     )");
   });
 
+  // Forecast config API
+  server.on("/api/forecast", HTTP_GET, [](AsyncWebServerRequest *request) {
+#ifdef ENABLE_STORAGE
+    Preferences prefs;
+    prefs.begin("forecast", true);
+    JsonDocument doc;
+    doc["cityIndex"] = prefs.getInt("cityIdx", 0);
+    prefs.end();
+    String output;
+    serializeJson(doc, output);
+    request->send(200, "application/json", output);
+#else
+    request->send(200, "application/json", "{\"cityIndex\":0}");
+#endif
+  });
+
+  server.on(
+      "/api/forecast", HTTP_POST,
+      [](AsyncWebServerRequest *request) {},
+      NULL,
+      [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t, size_t) {
+#ifdef ENABLE_STORAGE
+        JsonDocument doc;
+        DeserializationError err = deserializeJson(doc, data, len);
+        if (err)
+        {
+          request->send(400, "application/json", "{\"error\":\"invalid json\"}");
+          return;
+        }
+        if (!doc["cityIndex"].is<int>())
+        {
+          request->send(400, "application/json", "{\"error\":\"cityIndex required\"}");
+          return;
+        }
+        int idx = doc["cityIndex"].as<int>();
+        if (idx < 0 || idx > 3)
+        {
+          request->send(400, "application/json", "{\"error\":\"cityIndex 0-3\"}");
+          return;
+        }
+        Preferences prefs;
+        prefs.begin("forecast", false);
+        prefs.putInt("cityIdx", idx);
+        prefs.end();
+        Serial.printf("[API] Saved forecast cityIdx=%d\n", idx);
+        request->send(200, "application/json", "{\"ok\":true}");
+#else
+        request->send(501, "application/json", "{\"error\":\"no storage\"}");
+#endif
+      });
+
+  server.on("/forecast", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/html", R"(
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Weather Forecast</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}.container{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:600px;width:100%;padding:40px}h1{color:#333;margin-bottom:10px}p{color:#666;margin-bottom:10px}label{display:block;margin-top:15px;font-weight:600}select{width:100%;padding:12px;margin-top:5px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;background:#fff;cursor:pointer}button{margin-top:20px;padding:12px 30px;border:none;border-radius:8px;font-weight:600;cursor:pointer;background:#667eea;color:#fff;font-size:16px;width:100%;transition:background .2s}button:hover{background:#5a6fd6}#status{margin-top:15px;padding:10px;border-radius:5px;display:none;font-size:13px}#status.ok{background:#d4edda;color:#155724;display:block}#status.err{background:#f8d7da;color:#721c24;display:block}.info{background:#e7f3ff;border-left:4px solid #2196F3;padding:10px;margin-top:20px;border-radius:4px;font-size:13px;color:#1565c0;line-height:1.6}</style></head><body><div class="container"><h1>Weather Forecast</h1><p>Tomorrow's weather on LED matrix</p><div id="status"></div><label>Select City<select id="citySelect"><option value="0">Espoo</option><option value="1">Helsinki</option><option value="2">St. Petersburg</option><option value="3">Berlin</option></select></label><button id="save">Save</button><div class="info">City will be used when Forecast plugin runs in the scheduler.<br>Data from Open-Meteo API, updates every 30 minutes.</div></div><script>
+const cityEl=document.getElementById('citySelect'),statusEl=document.getElementById('status');
+function show(t,ok){statusEl.textContent=t;statusEl.className=ok?'ok':'err';statusEl.style.display='block';setTimeout(()=>{statusEl.style.display='none'},4000)}
+async function load(){
+  try{
+    const r=await fetch('/api/forecast');
+    if(!r.ok)return;
+    const d=await r.json();
+    if(d.cityIndex!==undefined)cityEl.value=String(d.cityIndex);
+  }catch(e){show('Load error',0)}
+}
+load();
+document.getElementById('save').onclick=async()=>{
+  const idx=parseInt(cityEl.value);
+  try{
+    const r=await fetch('/api/forecast',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cityIndex:idx})});
+    if(!r.ok){show('Save failed',0);return}
+    show('Saved!',1);
+  }catch(e){show('Error: '+e.message,0)}
+};
+</script></body></html>
+    )");
+  });
+
   server.on("/config", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(200, "text/html", R"(
 <!DOCTYPE html>
