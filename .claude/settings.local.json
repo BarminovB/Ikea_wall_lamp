@@ -16,7 +16,8 @@
       "Bash(npx pnpm:*)",
       "Bash(node:*)",
       "Bash(where:*)",
-      "Bash(python patch_webgui.py:*)"
+      "Bash(python patch_webgui.py:*)",
+      "Bash(del \"c:\\\\Users\\\\Struc\\\\Ikea Led\\\\ikea-led-obegraensad\\\\build_log.txt\")"
     ]
   }
 }
