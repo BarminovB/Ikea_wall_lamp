@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(pio run:*)",
+      "Bash(pip install:*)",
+      "Bash(\"C:\\\\Users\\\\Struc\\\\.platformio\\\\penv\\\\Scripts\\\\pio.exe\" run -e esp32dev -d \"c:\\\\Users\\\\Struc\\\\Ikea Led\\\\ikea-led-obegraensad\")",
+      "Bash(del \"c:\\\\Users\\\\Struc\\\\Ikea Led\\\\ikea-led-obegraensad\\\\src\\\\plugins\\\\EspooWeatherPlugin.cpp\")",
+      "Bash(del \"c:\\\\Users\\\\Struc\\\\Ikea Led\\\\ikea-led-obegraensad\\\\include\\\\plugins\\\\EspooWeatherPlugin.h\")",
+      "Bash(findstr:*)",
+      "Bash(del \"c:\\\\Users\\\\Struc\\\\Ikea Led\\\\ikea-led-obegraensad\\\\include\\\\plugins\\\\ClockPlugin.h\")",
+      "Bash(del \"c:\\\\Users\\\\Struc\\\\Ikea Led\\\\ikea-led-obegraensad\\\\src\\\\plugins\\\\ClockPlugin.cpp\")",
+      "Bash(node --version:*)",
+      "Bash(pnpm --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(npx pnpm:*)",
+      "Bash(node:*)",
+      "Bash(where:*)",
+      "Bash(python patch_webgui.py:*)"
+    ]
+  }
+}
