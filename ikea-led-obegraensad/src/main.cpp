@@ -63,6 +63,9 @@
 #include "plugins/MarioPlugin.h"
 #include "plugins/BatmanPlugin.h"
 #include "plugins/GoosePlugin.h"
+#include "plugins/MortalKombatPlugin.h"
+#include "plugins/CatPlugin.h"
+#include "plugins/DinoPlugin.h"
 
 #ifdef ENABLE_SERVER
 #include "plugins/AnimationPlugin.h"
@@ -281,6 +284,9 @@ void baseSetup()
   pluginManager.addPlugin(new MarioPlugin());
   pluginManager.addPlugin(new BatmanPlugin());
   pluginManager.addPlugin(new GoosePlugin());
+  pluginManager.addPlugin(new MortalKombatPlugin());
+  pluginManager.addPlugin(new CatPlugin());
+  pluginManager.addPlugin(new DinoPlugin());
 
 #ifdef ENABLE_SERVER
   // pluginManager.addPlugin(new WeatherPlugin());

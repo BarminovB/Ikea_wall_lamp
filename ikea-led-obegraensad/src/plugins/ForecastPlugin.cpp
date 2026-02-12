@@ -173,16 +173,10 @@ void ForecastPlugin::drawIcon()
 
 void ForecastPlugin::drawTempValue(int temp, int y)
 {
-  // Arrow occupies x=0-2; sign at x=4-6; digit(s) after sign; degree 2x2
+  // Arrow at x=0-2; sign at x=4-6; digits after sign
   if (temp >= 10)
   {
-    // Two digits, no sign needed (obviously positive)
-    Screen.drawNumbers(4, y, {temp / 10, temp % 10});
-    // Degree symbol 2x2
-    Screen.setPixel(14, y, 1, 120);
-    Screen.setPixel(15, y, 1, 120);
-    Screen.setPixel(14, y + 1, 1, 120);
-    Screen.setPixel(15, y + 1, 1, 120);
+    Screen.drawNumbers(3, y, {temp / 10, temp % 10});
   }
   else if (temp >= 0)
   {
@@ -192,12 +186,7 @@ void ForecastPlugin::drawTempValue(int temp, int y)
     Screen.setPixel(5, y + 2, 1, 150);
     Screen.setPixel(6, y + 2, 1, 150);
     Screen.setPixel(5, y + 3, 1, 150);
-    Screen.drawNumbers(8, y, {temp});
-    // Degree symbol 2x2
-    Screen.setPixel(13, y, 1, 120);
-    Screen.setPixel(14, y, 1, 120);
-    Screen.setPixel(13, y + 1, 1, 120);
-    Screen.setPixel(14, y + 1, 1, 120);
+    Screen.drawNumbers(7, y, {temp});
   }
   else if (temp > -10)
   {
@@ -205,20 +194,15 @@ void ForecastPlugin::drawTempValue(int temp, int y)
     Screen.setPixel(4, y + 2, 1, 150);
     Screen.setPixel(5, y + 2, 1, 150);
     Screen.setPixel(6, y + 2, 1, 150);
-    Screen.drawNumbers(8, y, {-temp});
-    // Degree symbol 2x2
-    Screen.setPixel(13, y, 1, 120);
-    Screen.setPixel(14, y, 1, 120);
-    Screen.setPixel(13, y + 1, 1, 120);
-    Screen.setPixel(14, y + 1, 1, 120);
+    Screen.drawNumbers(7, y, {-temp});
   }
   else
   {
-    // "-15" — minus + two digits (tight fit, shifted right by 1)
+    // "-15" — minus + two digits
     int t = -temp;
     Screen.setPixel(4, y + 2, 1, 150);
     Screen.setPixel(5, y + 2, 1, 150);
-    Screen.drawNumbers(7, y, {t / 10, t % 10});
+    Screen.drawNumbers(6, y, {t / 10, t % 10});
   }
 }
 
